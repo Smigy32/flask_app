@@ -1,0 +1,185 @@
+openapi: 3.0.0
+servers:
+  - url: http://127.0.0.1:5000
+info:
+  title: Flask application for books managing
+  version: 1.0.1
+  description: This is a sample server for a library.
+tags:
+  - name: Books
+paths:
+  /books/:
+    get:
+      tags:
+        - Books
+      summary: Get all books
+      parameters:
+        - name: title
+          in: query
+          description: A book's title
+          required: false
+          schema:
+            type: string
+        - name: author
+          in: query
+          description: A book's author
+          required: false
+          schema:
+            type: string
+        - name: genre
+          in: query
+          description: A book's genre
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of all books
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetBook'
+    post:
+      tags:
+        - Books
+      summary: Create a new book
+      requestBody:
+        required: true
+        description: Book's creation
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EditBook'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              example:
+                message: The book was created!
+        '400':
+          description: Bad Input
+          content:
+            application/json:
+              example:
+                message: Please fill in all information about the book!
+  /books/{book_id}:
+    get:
+      tags:
+        - Books
+      parameters:
+        - name: book_id
+          in: path
+          description: Book's id
+          required: true
+          schema:
+            type: integer
+      summary: Get a book by its id
+      responses:
+        '200':
+          description: One books is gotten
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetBook'
+        '404':
+          description: Book Not Found
+          content:
+            application/json:
+              example:
+                message: Book not found.
+    patch:
+      tags:
+        - Books
+      summary: Updates a book
+      parameters:
+        - name: book_id
+          in: path
+          description: Book's id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        description: Book's update
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EditBook'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              example:
+                message: The book was updated
+        '400':
+          description: Bad Input
+          content:
+            application/json:
+              example:
+                message: Please fill in all information about the book!
+        '404':
+          description: Book Not Found
+          content:
+            application/json:
+              example:
+                message: Book not found.
+    delete:
+      tags:
+        - Books
+      summary: Deletes a book
+      parameters:
+        - name: book_id
+          in: path
+          description: Book's id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Deleted
+          content:
+            application/json:
+              example:
+                message: The book was deleted!
+        '404':
+          description: Book Not Found
+          content:
+            application/json:
+              example:
+                message: Book not found.
+
+components:
+  schemas:
+    GetBook:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: Harry Potter
+        author:
+          type: string
+          example: Joanne Rowling
+        genre:
+          type: string
+          example: fantasy
+    GetBooks:
+      type: array
+      items:
+        $ref: '#/components/schemas/GetBook'
+    EditBook:
+      type: object
+      properties:
+        title:
+          type: string
+          example: The Catcher in the Rye
+        author:
+          type: string
+          example: Jerome David Salinger
+        genre:
+          type: string
+          example: coming-of-age fiction
